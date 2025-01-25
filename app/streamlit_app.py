@@ -10,6 +10,9 @@ st.title("ESG Portfolio Optimizer")
 # Layout with two columns
 col1, col2 = st.columns([1, 1])  # Adjust ratios if needed
 
+stock_options = ['AAPL', 'AMZN', 'TSLA', 'MSFT', 'NVDA', 'ADBE', 'JPM', 'BAC', 'C', 'PFE', 'JNJ', 'UNH', 'BA', 'GE', 'XOM', 'CVX', 'DUK', 'NEE', 'KO', 'PG', 'PEP', 'T', 'VZ', 'META', 'GOOGL', 'NFLX', 'NEM', 'CAT', 'DHI', 'PLD', 'SPG']
+sector_options = ['Consumer Discretionary', 'Information Technology', 'Financials', 'Health Care', 'Industrials', 'Energy', 'Utilities', 'Consumer Staples', 'Communication Services', 'Materials', 'Real Estate']
+
 # Left Column: Inputs
 with col1:
     st.header("Input Preferences")
@@ -22,13 +25,19 @@ with col1:
     risk_aversion = st.slider("Risk Aversion (0-5)", 0, 5, 3)
     esg_list = [environmental_score, social_score, governance_score, risk_aversion]
 
-    # Excluded Sectors
-    excluded_sectors = st.text_input("Excluded Sectors (comma-separated)", "")
-    exstock_list = [excluded_sectors]
-
     # Excluded Stocks
-    excluded_stocks = st.text_input("Excluded Stocks (comma-separated)", "")
-    exsector_list = [excluded_stocks]
+    excluded_stocks = st.multiselect(
+        "Select stocks to exclude:",
+        options=stock_options,
+        default=None,  # Default is no selection
+    )
+
+    # Excluded Sectors
+    excluded_sectors = st.multiselect(
+        "Select sectors to exclude:",
+        options=sector_options,
+        default=None,  # Default is no selection
+    )
 
     # Process Button
     process_button = st.button("Process Portfolio")
@@ -38,7 +47,7 @@ with col2:
     if process_button:
         st.header("Optimized Portfolio")
         with st.spinner("Generating Portfolio"):
-            figre = get_portfolio(esg_list, exsector_list, exstock_list)
+            figre = get_portfolio(esg_list, excluded_sectors, excluded_stocks)
             st.pyplot(figre)
             st.success("Processing completed! Displaying your portfolio below.")
     else:
